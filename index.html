@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Chapa Quente - Santiago</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Source Sans 3','Source Sans Pro',sans-serif;background:#e0e0e0;display:flex;justify-content:center}
+#app{width:100%;max-width:480px;background:#fff;min-height:100vh;display:flex;flex-direction:column;position:relative;box-shadow:0 0 32px rgba(0,0,0,0.2);overflow:hidden}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:200;background:#1c1c1c;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;min-height:60px;flex-shrink:0}
+.header-left{display:flex;align-items:center;gap:10px;flex:1;overflow:hidden}
+.logo-link{flex-shrink:0;text-decoration:none}
+.logo-link img{width:44px;height:44px;border-radius:50%;object-fit:cover;display:block;border:1.5px solid rgba(255,255,255,0.12)}
+.store-info{flex:1;overflow:hidden}
+.store-name{font-size:13.5px;font-weight:700;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.store-status-row{display:flex;align-items:center;gap:8px;margin-top:2px}
+.store-status{font-size:11.5px;font-weight:600;color:#ff4d4d;line-height:1}
+.store-info-link{font-size:11.5px;color:rgba(255,255,255,0.4);text-decoration:none;cursor:pointer;transition:color .2s}
+.store-info-link:hover{color:rgba(255,255,255,0.7)}
+.header-btn{background:none;border:none;cursor:pointer;color:#fff;padding:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;border-radius:50%;transition:background .15s}
+.header-btn:hover{background:rgba(255,255,255,0.1)}
+.header-btn svg{width:22px;height:22px;fill:currentColor}
+.header-title{font-size:16px;font-weight:700;color:#fff;flex:1;text-align:center}
+.back-header{display:none;align-items:center;width:100%}
+.back-header.active{display:flex}
+.default-header{display:none;align-items:center;justify-content:space-between;width:100%}
+.default-header.active{display:flex}
+
+/* VIEWS */
+main{flex:1;overflow-y:auto;padding-bottom:62px;-webkit-overflow-scrolling:touch}
+.view{display:none;min-height:100%}
+.view.active{display:block}
+
+/* CATEGORIES GRID */
+.categories-grid{display:grid;grid-template-columns:1fr 1fr}
+.category-card{position:relative;cursor:pointer;overflow:hidden;height:130px;border:.5px solid rgba(0,0,0,0.18);-webkit-tap-highlight-color:transparent}
+.category-card.has-desc{height:155px}
+.category-card.full-width{grid-column:span 2;height:130px}
+.categorias-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .35s ease;will-change:transform}
+.category-card:active .categorias-bg,.category-card:hover .categorias-bg{transform:scale(1.06)}
+.categorias-info{position:absolute;inset:0;background:linear-gradient(359deg,rgba(2,2,2,.5) 20%,rgba(72,60,60,0) 100%)}
+.bg-shadow{position:absolute;inset:0;background:linear-gradient(359deg,rgb(2,2,2) 0%,rgba(72,60,60,.36) 35%,rgba(92,92,92,0) 70%,rgba(0,0,0,.09) 100%)}
+.category-content{position:absolute;bottom:0;left:0;right:0;padding:8px 10px 10px}
+.category-name{font-size:13px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.2px;line-height:1.25;text-shadow:0 1px 4px rgba(0,0,0,.6)}
+.category-desc{font-size:10.5px;color:rgba(255,255,255,.82);margin-top:3px;line-height:1.35}
+
+/* CATEGORY DETAIL */
+#view-detail .detail-hero{height:160px;position:relative;overflow:hidden}
+#view-detail .detail-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+#view-detail .detail-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.3) 0%,rgba(0,0,0,.7) 100%)}
+#view-detail .detail-hero-title{position:absolute;bottom:16px;left:16px;font-size:22px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:.5px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.product-list{padding:8px 0}
+.product-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.product-item:hover{background:#fafafa}
+.product-img{width:72px;height:72px;border-radius:10px;object-fit:cover;flex-shrink:0;background:#e0e0e0}
+.product-info{flex:1;overflow:hidden}
+.product-title{font-size:14px;font-weight:600;color:#1a1a1a;line-height:1.3}
+.product-desc{font-size:12px;color:#888;margin-top:2px;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.product-price{font-size:14px;font-weight:700;color:#1a1a1a;margin-top:4px}
+.add-btn{flex-shrink:0;background:#1c1c1c;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s,background .15s;-webkit-tap-highlight-color:transparent}
+.add-btn:hover{background:#333;transform:scale(1.1)}
+.add-btn svg{width:18px;height:18px;fill:#fff}
+.add-btn.added{background:#27ae60;animation:popIn .25s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes popIn{0%{transform:scale(.8)}100%{transform:scale(1)}}
+
+/* CART */
+.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;text-align:center;min-height:400px}
+.cart-empty-icon{width:72px;height:72px;fill:#ddd;margin-bottom:20px}
+.cart-empty h3{font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:8px}
+.cart-empty p{font-size:14px;color:#888;line-height:1.5;margin-bottom:24px}
+.btn-primary{display:inline-block;background:#1c1c1c;color:#fff;font-size:15px;font-weight:700;padding:14px 32px;border-radius:12px;border:none;cursor:pointer;text-decoration:none;transition:background .2s,-webkit-tap-highlight-color .1s;-webkit-tap-highlight-color:transparent}
+.btn-primary:hover{background:#333}
+.btn-primary.full{width:100%;text-align:center;padding:16px}
+.btn-primary.green{background:#27ae60}
+.btn-primary.green:hover{background:#219a52}
+.cart-items{padding:8px 0}
+.cart-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #f0f0f0}
+.cart-item-img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#e0e0e0}
+.cart-item-info{flex:1;overflow:hidden}
+.cart-item-name{font-size:14px;font-weight:600;color:#1a1a1a;line-height:1.3}
+.cart-item-price{font-size:13px;color:#555;margin-top:2px}
+.qty-controls{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.qty-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid #1c1c1c;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.qty-btn:hover{background:#1c1c1c;color:#fff}
+.qty-btn svg{width:14px;height:14px;fill:currentColor}
+.qty-num{font-size:15px;font-weight:700;color:#1a1a1a;min-width:20px;text-align:center}
+.cart-footer{padding:16px 14px;border-top:1px solid #eee;position:sticky;bottom:62px;background:#fff}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.cart-total-label{font-size:14px;color:#555}
+.cart-total-val{font-size:20px;font-weight:900;color:#1a1a1a}
+
+/* ACCOUNT */
+.conta-header-section{background:#1c1c1c;padding:32px 20px 28px;text-align:center}
+.conta-avatar{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.conta-avatar svg{width:36px;height:36px;fill:rgba(255,255,255,.6)}
+.conta-guest-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:6px}
+.conta-guest-sub{font-size:13px;color:rgba(255,255,255,.5)}
+.form-section{padding:24px 20px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.form-input{width:100%;border:1.5px solid #e0e0e0;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:#1a1a1a;background:#fafafa;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:#1c1c1c;background:#fff}
+.form-divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+.form-divider span{font-size:12px;color:#bbb;white-space:nowrap}
+.form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:#e8e8e8}
+.form-link{text-align:center;margin-top:16px;font-size:13px;color:#888}
+.form-link a{color:#1c1c1c;font-weight:700;text-decoration:none}
+/* Logged in state */
+.profile-section{padding:20px 16px}
+.profile-card{background:#fafafa;border:1px solid #eee;border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.profile-avatar-img{width:52px;height:52px;border-radius:50%;background:#1c1c1c;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.profile-avatar-img svg{width:26px;height:26px;fill:#fff}
+.profile-name{font-size:16px;font-weight:700;color:#1a1a1a}
+.profile-email{font-size:12.5px;color:#888;margin-top:2px}
+.menu-list{border-radius:14px;overflow:hidden;border:1px solid #eee}
+.menu-item{display:flex;align-items:center;padding:14px 16px;background:#fff;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.menu-item:last-child{border-bottom:none}
+.menu-item:hover{background:#fafafa}
+.menu-item-icon{width:36px;height:36px;border-radius:10px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0}
+.menu-item-icon svg{width:18px;height:18px;fill:#555}
+.menu-item-label{flex:1;font-size:14px;font-weight:500;color:#1a1a1a}
+.menu-item-arrow{color:#ccc}
+.menu-item-arrow svg{width:16px;height:16px;fill:#ccc}
+.logout-btn{width:100%;margin-top:20px;background:none;border:1.5px solid #ff4444;color:#ff4444;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.logout-btn:hover{background:#ff4444;color:#fff}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#1c1c1c;display:flex;border-top:1px solid rgba(255,255,255,.07);z-index:200}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 4px 12px;text-decoration:none;color:rgba(255,255,255,.45);font-size:11px;font-weight:500;gap:3px;transition:color .18s;-webkit-tap-highlight-color:transparent;position:relative;cursor:pointer}
+.bottom-nav a:hover,.bottom-nav a.active{color:#fff}
+.bottom-nav a svg{width:20px;height:20px;fill:currentColor}
+.cart-badge-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+.cart-badge{display:none;position:absolute;top:-6px;right:-10px;background:#e53935;color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;align-items:center;justify-content:center;padding:0 4px}
+.cart-badge.show{display:flex}
+
+/* INFO MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:flex-end;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal-sheet{width:100%;max-width:480px;background:#fff;border-radius:16px 16px 0 0;max-height:85vh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-drag{width:36px;height:4px;background:#ddd;border-radius:2px;margin:12px auto 0}
+.modal-inner{padding:16px 20px 36px}
+.modal-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.modal-logo{width:56px;height:56px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.modal-title{font-size:17px;font-weight:700;color:#1a1a1a;line-height:1.2}
+.modal-status-badge{display:inline-block;margin-top:5px;background:#fff0f0;color:#e53935;font-size:11.5px;font-weight:600;padding:2px 10px;border-radius:20px;border:1px solid #ffcdd2}
+.info-section{margin-top:20px}
+.info-section h3{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.address-text{font-size:13.5px;color:#333;line-height:1.55}
+.phone-text{margin-top:6px;font-size:13.5px;color:#1a1a1a;font-weight:500}
+.hours-table{width:100%;border-collapse:collapse}
+.hours-table tr{border-bottom:1px solid #f2f2f2}
+.hours-table td{padding:7px 0;font-size:13px}
+.hours-table .day-col{color:#555;width:55%}
+.hours-table .hours-col{color:#1a1a1a;font-weight:500;text-align:right}
+.hours-table .closed-col{color:#e53935;font-weight:500;text-align:right}
+.payment-chips{display:flex;flex-wrap:wrap;gap:6px}
+.payment-chip{background:#f5f5f5;border:1px solid #e8e8e8;border-radius:20px;padding:4px 11px;font-size:12px;color:#444}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1c1c1c;color:#fff;font-size:13px;font-weight:600;padding:10px 18px;border-radius:30px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@supports (padding-bottom:env(safe-area-inset-bottom)){.bottom-nav{padding-bottom:env(safe-area-inset-bottom)}}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- HEADER -->
+<header class="header">
+  <!-- Default header (home) -->
+  <div class="default-header active" id="defaultHeader">
+    <div class="header-left">
+      <a href="#" class="logo-link" id="logoBtn">
+        <img src="data:image/jpeg;base64,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" alt="Logo">
+      </a>
+      <div class="store-info">
+        <div class="store-name">Chapa Quente - Santiago</div>
+        <div class="store-status-row">
+          <span class="store-status">Fechado</span>
+          <a href="#" class="store-info-link" id="infoLink">+ Info.</a>
+        </div>
+      </div>
+    </div>
+    <button class="header-btn" id="headerCartBtn" aria-label="Carrinho">
+      <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 6.9 18 9 18h12v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H19c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 23.5 5H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+    </button>
+  </div>
+  <!-- Back header (detail/sub-views) -->
+  <div class="back-header" id="backHeader">
+    <button class="header-btn" id="backBtn" aria-label="Voltar">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    </button>
+    <span class="header-title" id="backTitle">Categoria</span>
+    <div style="width:38px"></div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- VIEW: CATEGORIAS -->
+  <div id="view-categorias" class="view active">
+    <div class="categories-grid" id="categoriesGrid"></div>
+  </div>
+
+  <!-- VIEW: CATEGORY DETAIL -->
+  <div id="view-detail" class="view">
+    <div class="detail-hero">
+      <div class="detail-hero-bg" id="detailHeroBg"></div>
+      <div class="detail-hero-overlay"></div>
+      <div class="detail-hero-title" id="detailTitle"></div>
+    </div>
+    <div class="product-list" id="productList"></div>
+  </div>
+
+  <!-- VIEW: CARRINHO -->
+  <div id="view-carrinho" class="view">
+    <div id="cartEmpty" class="cart-empty">
+      <svg class="cart-empty-icon" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 6.9 18 9 18h12v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H19c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 23.5 5H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      <h3>Seu carrinho está vazio</h3>
+      <p>Adicione itens do cardápio para começar seu pedido</p>
+      <button class="btn-primary" onclick="goToView('categorias')">Ver Cardápio</button>
+    </div>
+    <div id="cartFull" style="display:none">
+      <div class="cart-items" id="cartItemsList"></div>
+      <div class="cart-footer">
+        <div class="cart-total-row">
+          <span class="cart-total-label">Total do pedido</span>
+          <span class="cart-total-val" id="cartTotal">R$ 0,00</span>
+        </div>
+        <button class="btn-primary full green" onclick="checkout()">Finalizar Pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: CONTA -->
+  <div id="view-conta" class="view">
+    <div id="contaGuest">
+      <div class="conta-header-section">
+        <div class="conta-avatar">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <div class="conta-guest-title">Olá, visitante!</div>
+        <div class="conta-guest-sub">Entre para acompanhar seus pedidos</div>
+      </div>
+      <div class="form-section">
+        <div class="form-group">
+          <label class="form-label">E-mail</label>
+          <input class="form-input" type="email" id="loginEmail" placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Senha</label>
+          <input class="form-input" type="password" id="loginPassword" placeholder="••••••••">
+        </div>
+        <button class="btn-primary full" onclick="doLogin()">Entrar</button>
+        <div class="form-divider"><span>ou</span></div>
+        <div class="form-link">Não tem conta? <a href="#" onclick="showRegister();return false">Criar conta grátis</a></div>
+        <div class="form-link" style="margin-top:10px"><a href="#" onclick="doLogin();return false">Esqueci minha senha</a></div>
+      </div>
+    </div>
+
+    <div id="contaLogado" style="display:none">
+      <div class="conta-header-section" style="text-align:left;padding:24px 20px 20px">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div class="conta-avatar" style="margin:0;width:56px;height:56px">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div>
+            <div style="font-size:18px;font-weight:700;color:#fff" id="loggedName">João Silva</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.5)" id="loggedEmail">joao@email.com</div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-section">
+        <div class="menu-list">
+          <div class="menu-item" onclick="alert('Em breve: histórico de pedidos')">
+            <div class="menu-item-icon"><svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg></div>
+            <span class="menu-item-label">Meus pedidos</span>
+            <span class="menu-item-arrow"><svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+          </div>
+          <div class="menu-item" onclick="alert('Em breve: editar perfil')">
+            <div class="menu-item-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+            <span class="menu-item-label">Dados pessoais</span>
+            <span class="menu-item-arrow"><svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+          </div>
+          <div class="menu-item" onclick="alert('Em breve: endereços')">
+            <div class="menu-item-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+            <span class="menu-item-label">Endereços salvos</span>
+            <span class="menu-item-arrow"><svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+          </div>
+          <div class="menu-item" onclick="openModal()">
+            <div class="menu-item-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>
+            <span class="menu-item-label">Informações do restaurante</span>
+            <span class="menu-item-arrow"><svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()">Sair da conta</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="#" data-view="categorias" class="active">
+    <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+    Categorias
+  </a>
+  <a href="#" data-view="carrinho">
+    <span class="cart-badge-wrap">
+      <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 6.9 18 9 18h12v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H19c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 23.5 5H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </span>
+    Carrinho
+  </a>
+  <a href="#" data-view="conta">
+    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+    Conta
+  </a>
+</nav>
+
+<!-- INFO MODAL -->
+<div class="modal-overlay" id="infoModal">
+  <div class="modal-sheet">
+    <div class="modal-drag"></div>
+    <div class="modal-inner">
+      <div class="modal-header">
+        <img src="data:image/jpeg;base64,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" alt="Logo" class="modal-logo">
+        <div>
+          <div class="modal-title">Chapa Quente - Santiago</div>
+          <div><span class="modal-status-badge">Fechado agora</span></div>
+        </div>
+      </div>
+      <div class="info-section">
+        <h3>Endereço</h3>
+        <p class="address-text">R. Fernando Ferrari, 394 - Castilhos<br>Santiago - RS, 97709-210</p>
+        <p class="phone-text">📞 (55) 99973-3321 / (55) 99657-0483</p>
+      </div>
+      <div class="info-section">
+        <h3>Horários de Funcionamento</h3>
+        <table class="hours-table">
+          <tr><td class="day-col">Segunda-feira</td><td class="hours-col">11:00–14:00 / 18:00–23:30</td></tr>
+          <tr><td class="day-col">Terça-feira</td><td class="hours-col">11:00–14:00 / 18:00–23:30</td></tr>
+          <tr><td class="day-col">Quarta-feira</td><td class="hours-col">11:00–14:00 / 18:00–23:30</td></tr>
+          <tr><td class="day-col">Quinta-feira</td><td class="hours-col">11:00–14:00 / 18:00–23:30</td></tr>
+          <tr><td class="day-col">Sexta-feira</td><td class="hours-col">11:00–14:00 / 18:00–23:30</td></tr>
+          <tr><td class="day-col">Sábado</td><td class="hours-col">11:00–14:00 / 18:00–23:30</td></tr>
+          <tr><td class="day-col">Domingo</td><td class="hours-col">11:00–14:00 / 18:00–23:30</td></tr>
+        </table>
+      </div>
+      <div class="info-section">
+        <h3>Formas de Pagamento</h3>
+        <div class="payment-chips">
+          <span class="payment-chip">💵 Dinheiro</span><span class="payment-chip">Mastercard</span><span class="payment-chip">Visa</span><span class="payment-chip">Elo</span><span class="payment-chip">Hipercard</span><span class="payment-chip">Diners</span><span class="payment-chip">Banri Compras</span><span class="payment-chip">Verde Card</span><span class="payment-chip">📱 PIX Online</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+</div>
+<script>
+const CDN = 'https://d3im3awbb0qs95.cloudfront.net/';
+
+const PIMG = CDN+'eyJidWNrZXQiOiJtaXN0ZXJzMyIsImtleSI6Im1pc3RlcmNoZWZmX2U3YTlhMmEyXzJiNzlfNDZkZF85OTg5X2QyMzA3ZDVmODgxYVwvdXBsb2Fkc1wvY2F0ZWdvcmlhXC9fcGl6emFzLTIwMjIxMTA4MTYyODI0LmpwZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJmaXQiOiJjb3ZlciJ9fX0=';
+const XIMG = CDN+'eyJidWNrZXQiOiJtaXN0ZXJzMyIsImtleSI6Im1pc3RlcmNoZWZmX2U3YTlhMmEyXzJiNzlfNDZkZF85OTg5X2QyMzA3ZDVmODgxYVwvdXBsb2Fkc1wvY2F0ZWdvcmlhXC9feGlzLTIwMjIxMTI2MTUyNTI1LmpwZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJmaXQiOiJjb3ZlciJ9fX0=';
+const HIMG = CDN+'eyJidWNrZXQiOiJtaXN0ZXJzMyIsImtleSI6Im1pc3RlcmNoZWZmX2U3YTlhMmEyXzJiNzlfNDZkZF85OTg5X2QyMzA3ZDVmODgxYVwvdXBsb2Fkc1wvY2F0ZWdvcmlhXC9faGFtYnVyZ3VyZ3VlcmVzLWFydGVzYW5haXMtMjAyMjExMjYxMjMyNDYuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjo2MDAsImZpdCI6ImNvdmVyIn19fQ==';
+const POIMG = CDN+'eyJidWNrZXQiOiJtaXN0ZXJzMyIsImtleSI6Im1pc3RlcmNoZWZmX2U3YTlhMmEyXzJiNzlfNDZkZF85OTg5X2QyMzA3ZDVmODgxYVwvdXBsb2Fkc1wvY2F0ZWdvcmlhXC9fcG9yY29lcy0yMDIyMDkyNjE1NDQzMC5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjYwMCwiZml0IjoiY292ZXIifX19';
+const BIMG = CDN+'eyJidWNrZXQiOiJtaXN0ZXJzMyIsImtleSI6Im1pc3RlcmNoZWZmX2U3YTlhMmEyXzJiNzlfNDZkZF85OTg5X2QyMzA3ZDVmODgxYVwvdXBsb2Fkc1wvY2F0ZWdvcmlhXC9fYmViaWRhcy0yMDIyMDkyNjE2MTUwNS5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjYwMCwiZml0IjoiY292ZXIifX0=';
+const PRIMG = CDN+'eyJidWNrZXQiOiJtaXN0ZXJzMyIsImtleSI6Im1pc3RlcmNoZWZmX2U3YTlhMmEyXzJiNzlfNDZkZF85OTg5X2QyMzA3ZDVmODgxYVwvdXBsb2Fkc1wvY2F0ZWdvcmlhXC9fcHJvbW9jYW8tMjAyMjExMDgxNjMxMzYuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjo2MDAsImZpdCI6ImNvdmVyIn19fQ==';
+
+const CATEGORIES = [
+  {id:'promocao',name:'PROMOÇÃO',fullWidth:false,hasDesc:false,bg:PRIMG,items:[
+    {id:'promo1',name:'Calabresa (Mini Xis)',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Calabresa',price:15.00,img:null},
+    {id:'promo2',name:'Combo do Dia Chapa Quente',desc:'Xis Frango + Coca Mini + Fritas',price:31.00,img:null},
+    {id:'promo3',name:'Grelhado de Frango (Mini Xis)',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Frango, Maionese Temperada e catchup',price:15.00,img:null},
+  ]},
+  {id:'combos',name:'COMBOS',fullWidth:false,hasDesc:false,bg:PRIMG,items:[
+    {id:'combo1',name:'Combo do Dia Chapa Quente',desc:'Xis Frango + Coca Mini + Fritas',price:31.00,img:null},
+    {id:'combo2',name:'Combo Econômico',desc:'Batata palha, Ketchup, Maionese, Ervilha, Milho, Tomate, Queijo, Fritas e Salsicha',price:15.00,img:null},
+  ]},
+  {id:'pizzas',name:'PIZZAS',fullWidth:false,hasDesc:false,bg:PIMG,items:[
+    {id:'pz_prom_cal',name:'Pizza Calabresa (Promoção)',desc:'Pizza grande inteira de calabresa, 33cm (serve até 4 pessoas)',price:79.00,img:null},
+    {id:'pz_prom_chapa',name:'Pizza Chapa Quente (Promoção)',desc:'Pizza grande inteira, 33cm (serve até 4 pessoas)',price:87.00,img:null},
+    {id:'pz_prom_frango',name:'Pizza Frango Catupiry (Promoção)',desc:'Pizza grande inteira de 33cm (serve até 4 pessoas)',price:77.00,img:null},
+    {id:'pz_4q',name:'4 Queijos',desc:'Molho vermelho, Queijo Mussarela, Orégano, Parmesão, Gorgonzola e Provolone',price:21.00,img:null},
+    {id:'pz_4qb',name:'4 Queijos com Bacon',desc:'Molho vermelho, Bacon, Orégano, Mozarela, Parmesão, Gorgonzola e Provolone',price:21.00,img:null},
+    {id:'pz_4qf',name:'4 Queijos com Filé',desc:'Molho vermelho, Filé, Orégano, Mozarela, Parmesão, Gorgonzola e Provolone',price:21.00,img:null},
+    {id:'pz_5q',name:'5 Queijos',desc:'Molho vermelho, Queijo Mussarela, Orégano, Catupiry, Parmesão, Gorgonzola e Provolone',price:21.00,img:null},
+    {id:'pz_5qb',name:'5 Queijos com Bacon',desc:'Molho vermelho, Bacon, Orégano, Catupiry, Mozarela, Parmesão, Gorgonzola e Provolone',price:21.00,img:null},
+    {id:'pz_5qf',name:'5 Queijos com Filé',desc:'Molho vermelho, Filé, Orégano, Catupiry, Mozarela, Parmesão, Gorgonzola e Provolone',price:21.00,img:null},
+    {id:'pz_6q',name:'6 Queijos',desc:'Molho vermelho, Queijo Mussarela, Orégano, Catupiry, Parmesão, Gorgonzola, Provolone e Cheddar',price:21.00,img:null},
+    {id:'pz_6qb',name:'6 Queijos com Bacon',desc:'Molho vermelho, Bacon, Orégano, Catupiry, Mozarela, Parmesão, Gorgonzola, Provolone e Cheddar',price:21.00,img:null},
+    {id:'pz_6qf',name:'6 Queijos com Filé',desc:'Molho vermelho, Filé, Orégano, Catupiry, Mozarela, Parmesão, Gorgonzola, Provolone e Cheddar',price:21.00,img:null},
+    {id:'pz_alho',name:'Alho e Óleo',desc:'Molho vermelho, Queijo Mussarela, Orégano, Alho e Óleo',price:21.00,img:null},
+    {id:'pz_bac',name:'Bacon',desc:'Molho vermelho, Bacon, Queijo Mussarela e Orégano',price:21.00,img:null},
+    {id:'pz_bacbroc',name:'Bacon com Brócolis e Molho Branco',desc:'Molho vermelho, Molho branco, Milho, Bacon, Queijo Mussarela, Orégano e Brócolis',price:21.00,img:null},
+    {id:'pz_cal',name:'Calabresa',desc:'Molho vermelho, Calabresa, Queijo Mussarela e Orégano',price:21.00,img:null},
+    {id:'pz_chapa',name:'Chapa Quente',desc:'Molho vermelho, Filé, Bacon, Calabresa, Queijo Mussarela, Orégano e Fritas',price:21.00,img:null},
+    {id:'pz_elpatron',name:'El Patron',desc:'Molho vermelho, Filé, Bacon, Queijo Mussarela, Orégano, 4 queijos, Cebola e Barbecue',price:21.00,img:null},
+    {id:'pz_eltchapa',name:'El Tchapa',desc:'Molho vermelho, Presunto, Filé, Queijo Mussarela, Orégano, Rúcula, Tomate seco, 4 queijos, Pimentão e Alho',price:21.00,img:null},
+    {id:'pz_filea',name:'Filé Acebolado',desc:'Molho vermelho, Filé, Queijo Mussarela, Orégano e Cebola',price:21.00,img:null},
+    {id:'pz_filemostarda',name:'Filé ao Molho Mostarda',desc:'Molho vermelho, Molho branco, Mostarda, Filé, Queijo Mussarela e Orégano',price:21.00,img:null},
+    {id:'pz_filealho',name:'Filé com Alho',desc:'Molho vermelho, Filé, Queijo Mussarela, Orégano e Alho',price:21.00,img:null},
+    {id:'pz_filebarbecue',name:'Filé com Barbecue',desc:'Molho vermelho, Filé, Queijo Mussarela, Orégano e Barbecue',price:21.00,img:null},
+    {id:'pz_filecatupiry',name:'Filé com Catupiry',desc:'Molho vermelho, Filé, Queijo Mussarela, Orégano e Catupiry',price:21.00,img:null},
+    {id:'pz_filecream',name:'Filé com Cream Cheese',desc:'Molho vermelho, Filé, Queijo Mussarela, Orégano e Cream Cheese',price:21.00,img:null},
+    {id:'pz_frango',name:'Frango',desc:'Molho vermelho, Frango em cubos, Queijo Mussarela e Orégano',price:21.00,img:null},
+    {id:'pz_frangocream',name:'Frango com Cream Cheese',desc:'Molho vermelho, Frango em cubos, Queijo Mussarela, Orégano e Cream Cheese',price:21.00,img:null},
+    {id:'pz_galinha',name:'Galinha Caipira',desc:'Molho vermelho, Milho, Tomate, Queijo Mussarela, Orégano, Pimentão e Galinha',price:21.00,img:null},
+    {id:'pz_marg',name:'Marguerita',desc:'Molho vermelho, Tomate, Queijo Mussarela e Manjericão',price:21.00,img:null},
+    {id:'pz_port',name:'Portuguesa',desc:'Molho vermelho, Presunto, Ovo, Queijo Mussarela, Pimentão, Cebola, Azeitona e Palmito',price:21.00,img:null},
+    {id:'pz_sici',name:'Siciliana',desc:'Molho vermelho, Calabresa, Queijo Mussarela, Orégano, Cebola e Azeitona',price:21.00,img:null},
+    {id:'pz_strogfile',name:'Strogonoff de Filé',desc:'Molho vermelho, Molho branco, Filé, Champignon, Queijo Mussarela e Orégano',price:21.00,img:null},
+    {id:'pz_strogfrango',name:'Strogonoff de Frango',desc:'Molho vermelho, Molho branco, Champignon, Queijo Mussarela, Orégano e Frango',price:21.00,img:null},
+    {id:'pz_tomrucula',name:'Tomate Seco com Rúcula',desc:'Molho vermelho, Queijo Mussarela, Rúcula e Tomate seco',price:21.00,img:null},
+    {id:'pz_tomrucula4q',name:'Tomate Seco com Rúcula e 4 Queijos',desc:'Molho vermelho, Queijo Mussarela, Orégano, Rúcula, Tomate seco e 4 queijos',price:21.00,img:null},
+    {id:'pz_univ',name:'Universitária',desc:'Bacon, Calabresa, Orégano, 4 queijos, Frango, Catupiry e Azeitona',price:21.00,img:null},
+    {id:'pz_veg',name:'Vegetariana',desc:'Molho vermelho, Ervilha, Milho, Queijo Mussarela, Pimentão, Cebola, Azeitona, Palmito e Brócolis',price:21.00,img:null},
+    {id:'pz_banan',name:'Banana com Canela',desc:'Queijo Mussarela, Banana, Canela e Leite Condensado',price:21.00,img:null},
+    {id:'pz_banchoc',name:'Banana com Chocolate',desc:'Queijo Mussarela, Banana, Leite Condensado e Chocolate',price:21.00,img:null},
+    {id:'pz_beijo',name:'Beijo dos Deuses',desc:'Morango, Queijo Mussarela, Chocolate e Coco ralado',price:21.00,img:null},
+    {id:'pz_bis',name:'Bis',desc:'Queijo Mussarela',price:21.00,img:null},
+    {id:'pz_brig',name:'Brigadeiro',desc:'Queijo Mussarela e Brigadeiro',price:21.00,img:null},
+    {id:'pz_cali',name:'Califórnia',desc:'Uvas Passas, Queijo Mussarela, Pêssego, Abacaxi, Figo e Fios de Ovos',price:21.00,img:null},
+    {id:'pz_crocnoze',name:'Crocante de Nozes',desc:'Chocolate branco, Chocolate preto, Nozes, Queijo Mussarela, Coco ralado e chocolate misto',price:21.00,img:null},
+    {id:'pz_dianegro',name:'Diamante Negro',desc:'Chocolate preto, Queijo Mussarela e Diamante Negro',price:21.00,img:null},
+    {id:'pz_laka',name:'Laka',desc:'Chocolate branco, Queijo Mussarela e Chocolate Laka',price:21.00,img:null},
+    {id:'pz_mms',name:'M&Ms',desc:'Queijo Mussarela e M&Ms',price:21.00,img:null},
+    {id:'pz_morang',name:'Morango',desc:'Morango e Queijo Mussarela',price:21.00,img:null},
+    {id:'pz_oreo',name:'Oreo',desc:'Queijo Mussarela, Leite Condensado, Chocolate e Oreo',price:21.00,img:null},
+    {id:'pz_ourobranco',name:'Ouro Branco',desc:'Queijo Mussarela, Leite Condensado, Chocolate e Ouro Branco',price:21.00,img:null},
+  ]},
+  {id:'dogs',name:'DOGS',fullWidth:false,hasDesc:false,bg:PRIMG,items:[
+    {id:'dog1',name:'Alpha Dog',desc:'Molho vermelho, Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Pimentão, Fritas, Salsicha, Maionese Caseira e catchup',price:21.00,img:null},
+    {id:'dog2',name:'Combo Econômico',desc:'Batata palha, Mostarda, Ervilha, Milho, Tomate, Salsicha, Queijo Parmesão, Maionese Caseira, Batata Frita, catchup e Meio pão de xis',price:15.00,img:null},
+  ]},
+  {id:'xis-prensado',name:'XIS PRENSADO',fullWidth:false,hasDesc:false,bg:XIMG,items:[
+    {id:'xp1',name:'Bacon',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Bacon e Alface',price:41.00,img:null},
+    {id:'xp2',name:'Calabresa',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Calabresa e Alface',price:31.00,img:null},
+    {id:'xp3',name:'Calabresa com Bacon',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Bacon, Calabresa, Maionese Caseira e catchup',price:34.00,img:null},
+    {id:'xp4',name:'Chapa Quente',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Filé, Bacon, Calabresa e Alface',price:41.00,img:null},
+    {id:'xp5',name:'Chapa Quente com Barbecue',desc:'Mostarda, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Filé, Bacon, Calabresa, Alface, Maionese Caseira, Barbecue e catchup',price:43.00,img:null},
+    {id:'xp6',name:'El Patron',desc:'Ervilha, Milho, Ovo, Filé, Bacon, 4 queijos, Cebola, Maionese Temperada e Barbecue',price:45.00,img:null},
+    {id:'xp7',name:'El Tchapa',desc:'Maionese, Presunto, Filé, Rúcula, Tomate seco, 4 queijos, Pimentão, Pimenta e Alho',price:43.00,img:null},
+    {id:'xp8',name:'Filé ao Molho Mostarda',desc:'Molho branco, Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Filé',price:46.00,img:null},
+    {id:'xp9',name:'Filé com Bacon',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Filé, Bacon e Alface',price:46.00,img:null},
+    {id:'xp10',name:'Filé com Calabresa',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Filé, Calabresa e Alface',price:45.00,img:null},
+    {id:'xp11',name:'Filé com Cream Cheese Acebolado',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Cebola, Maionese Temperada, Cream Cheese e catchup',price:47.00,img:null},
+    {id:'xp12',name:'Frango Premium',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Bacon, Frango em cubos, Cebola, Maionese Temperada, Cream Cheese e catchup',price:41.00,img:null},
+    {id:'xp13',name:'Grelhado de Filé',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Filé',price:45.00,img:null},
+    {id:'xp14',name:'Grelhado de Frango',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Frango em cubos na chapa',price:31.00,img:null},
+    {id:'xp15',name:'Salada',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Bife de Hamburguer',price:37.00,img:null},
+    {id:'xp16',name:'Strogonoff de Filé',desc:'Molho branco, Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé e Champignon',price:43.00,img:null},
+    {id:'xp17',name:'Strogonoff de Filé com Catupiry e Batata Palha',desc:'Molho vermelho, Molho branco, Batata palha, Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Champignon, Catupiry, Maionese Caseira e catchup',price:46.00,img:null},
+    {id:'xp18',name:'Strogonoff de Frango',desc:'Molho branco, Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Presunto, Ovo e Frango em cubos',price:31.00,img:null},
+    {id:'xp19',name:'Strogonoff de Frango com Batata Palha e Catupiry',desc:'Molho vermelho, Molho branco, Batata palha, Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Champignon, Frango em cubos, Catupiry, Maionese Temperada e catchup',price:33.00,img:null},
+    {id:'xp20',name:'Universitário',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Bacon, Calabresa, Alface, Frango e Catupiry',price:31.00,img:null},
+    {id:'xpd1',name:'Beijo dos Deuses (Doce)',desc:'Queijo, Creme de leite, Chocolate branco, Morango e Coco ralado',price:27.00,img:null},
+    {id:'xpd2',name:'Crocante de Nozes (Doce)',desc:'Queijo, Creme de leite, Chocolate preto e Nozes',price:27.00,img:null},
+  ]},
+  {id:'xis-aberto',name:'XIS ABERTO',fullWidth:false,hasDesc:true,desc:'Todos os xis abertos acompanham fritas',bg:XIMG,items:[
+    {id:'xa1',name:'Bacon',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Bacon',price:47.00,img:null},
+    {id:'xa2',name:'Calabresa',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Calabresa',price:47.00,img:null},
+    {id:'xa3',name:'Calabresa com Bacon',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Bacon, Calabresa, Maionese Temperada e catchup',price:47.00,img:null},
+    {id:'xa4',name:'Chapa Quente',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Filé, Bacon, Calabresa, Alface e Fritas',price:47.00,img:null},
+    {id:'xa5',name:'Chapa Quente com Barbecue',desc:'Mostarda, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Filé, Bacon, Calabresa, Alface, Maionese Temperada, Barbecue e catchup',price:47.00,img:null},
+    {id:'xa6',name:'El Patron',desc:'Ervilha, Milho, Ovo, Filé, Bacon, 4 queijos, Cebola, Maionese Temperada e Barbecue',price:49.00,img:null},
+    {id:'xa7',name:'El Tchapa',desc:'Maionese, Presunto, Filé, Rúcula, Tomate seco, 4 queijos, Pimentão, Pimenta e Alho',price:49.00,img:null},
+    {id:'xa8',name:'Filé ao Molho Mostarda',desc:'Molho branco, Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Filé',price:49.00,img:null},
+    {id:'xa9',name:'Filé com Bacon',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Bacon, Maionese Temperada e catchup',price:49.00,img:null},
+    {id:'xa10',name:'Filé com Calabresa',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Calabresa, Maionese Temperada e catchup',price:49.00,img:null},
+    {id:'xa11',name:'Filé com Cream Cheese Acebolado',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Cebola, Maionese Temperada, Cream Cheese e catchup',price:49.00,img:null},
+    {id:'xa12',name:'Frango Premium',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Bacon, Frango em cubos, Cebola, Maionese Temperada, Cream Cheese e catchup',price:47.00,img:null},
+    {id:'xa13',name:'Grelhado de Filé',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Filé',price:49.00,img:null},
+    {id:'xa14',name:'Grelhado de Filé Acebolado',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Cebola, Maionese Temperada e catchup',price:49.00,img:null},
+    {id:'xa15',name:'Grelhado de Frango',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Frango',price:47.00,img:null},
+    {id:'xa16',name:'Grelhado de Frango com Batata Palha e Catupiry',desc:'Batata palha, Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Catupiry, Maionese Temperada, Strogonoff de Frango e catchup',price:47.00,img:null},
+    {id:'xa17',name:'Salada',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Bife de Hamburguer',price:47.00,img:null},
+    {id:'xa18',name:'Strogonoff de Filé',desc:'Molho branco, Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé e Champignon',price:47.00,img:null},
+    {id:'xa19',name:'Strogonoff de Filé com Catupiry e Batata Palha',desc:'Batata palha, Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Catupiry, Maionese Temperada, Strogonoff de Filé e catchup',price:47.00,img:null},
+    {id:'xa20',name:'Strogonoff de Frango',desc:'Molho branco, Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Frango',price:47.00,img:null},
+  ]},
+  {id:'mini-xis',name:'MINI XIS',fullWidth:false,hasDesc:false,bg:XIMG,items:[
+    {id:'mx1',name:'Bacon',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Bacon',price:19.00,img:null},
+    {id:'mx2',name:'Calabresa',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Calabresa',price:15.00,img:null},
+    {id:'mx3',name:'Calabresa com Bacon',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Bacon, Calabresa, Maionese Temperada e catchup',price:19.00,img:null},
+    {id:'mx4',name:'Chapa Quente',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Filé, Bacon, Calabresa e Alface',price:19.00,img:null},
+    {id:'mx5',name:'Chapa Quente com Barbecue',desc:'Mostarda, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Filé, Bacon, Calabresa, Alface, Maionese Temperada, Barbecue e catchup',price:19.00,img:null},
+    {id:'mx6',name:'El Patron',desc:'Ervilha, Milho, Ovo, Filé, Bacon, 4 queijos, Cebola, Maionese Caseira e Barbecue',price:22.00,img:null},
+    {id:'mx7',name:'El Tchapa',desc:'Filé, Rúcula, Tomate seco, 4 queijos, Pimentão, Pimenta, Alho, Maionese Temperada e Presunto picado',price:19.00,img:null},
+    {id:'mx8',name:'Filé',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Filé',price:22.00,img:null},
+    {id:'mx9',name:'Filé com Bacon',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Bacon, Maionese Temperada e catchup',price:22.00,img:null},
+    {id:'mx10',name:'Filé com Calabresa',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Calabresa, Maionese Temperada e catchup',price:22.00,img:null},
+    {id:'mx11',name:'Filé com Cream Cheese Acebolado',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Cebola, Maionese Temperada, Cream Cheese e catchup',price:22.00,img:null},
+    {id:'mx12',name:'Frango Premium',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Bacon, Frango em cubos, Cebola, Maionese Temperada, Cream Cheese e catchup',price:19.00,img:null},
+    {id:'mx13',name:'Grelhado de Filé',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Maionese Temperada e catchup',price:22.00,img:null},
+    {id:'mx14',name:'Grelhado de Filé Acebolado',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé, Cebola, Maionese Temperada e catchup',price:22.00,img:null},
+    {id:'mx15',name:'Grelhado de Frango',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Frango, Maionese Temperada e catchup',price:15.00,img:null},
+    {id:'mx16',name:'Grelhado de Frango com Batata Palha e Catupiry',desc:'Batata palha, Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Catupiry, Maionese Temperada, Strogonoff de Frango e catchup',price:19.00,img:null},
+    {id:'mx17',name:'Salada',desc:'Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Bife de Hamburguer e catchup',price:19.00,img:null},
+    {id:'mx18',name:'Strogonof de Filé',desc:'Molho branco, Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Filé e Champignon',price:22.00,img:null},
+    {id:'mx19',name:'Strogonof de Frango',desc:'Molho branco, Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Frango em cubos',price:19.00,img:null},
+    {id:'mx20',name:'Strogonoff de Filé com Catupiry e Batata Palha',desc:'Batata palha, Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Catupiry, Maionese Temperada, Strogonoff de Filé e catchup',price:22.00,img:null},
+  ]},
+  {id:'hamburgueres',name:'HAMBÚRGUER',fullWidth:false,hasDesc:true,desc:'Acompanha fritas',bg:HIMG,items:[
+    {id:'hb1',name:'Trichapaburguer | Festival do Hambúrguer',desc:'Alface, Tomate, Queijo, Ovo, Cebola, Maionese Temperada, Bacon em tiras, Pão, 3 bifes e Acompanha fritas',price:39.00,img:null},
+    {id:'hb2',name:'Chapa Burguer com Bacon e Barbecue',desc:'Alface, Tomate, Queijo, Ovo, Bacon, Fritas, Cebola, Maionese Temperada, 2 Bifes de Hamburguer, Pão e Barbecue',price:33.00,img:null},
+    {id:'hb3',name:'Combo - Chapa Burguer',desc:'Tomate, Queijo, Ovo, Alface, Cebola, Pão, Maionese Caseira e 2 bifes',price:32.00,img:null},
+  ]},
+  {id:'lanches',name:'LANCHES',fullWidth:false,hasDesc:false,bg:PRIMG,items:[
+    {id:'la1',name:'Alpha Dog',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Alface, Pimentão, Fritas e Salsicha',price:21.00,img:null},
+    {id:'la2',name:'Torradão',desc:'Ketchup, Mostarda, Maionese, Queijo, Presunto, Ovo, Bife de Hamburguer e Pão de Sanduíche',price:23.00,img:null},
+  ]},
+  {id:'porcoes',name:'PORÇÕES',fullWidth:false,hasDesc:false,bg:POIMG,items:[
+    {id:'po1',name:'Fritas',desc:'a partir de',price:15.00,img:null},
+  ]},
+  {id:'molhos',name:'MOLHOS',fullWidth:false,hasDesc:false,bg:POIMG,items:[
+    {id:'mol1',name:'Maionese 100g',desc:'',price:2.00,img:null},
+  ]},
+  {id:'bebidas',name:'BEBIDAS',fullWidth:true,hasDesc:false,bg:BIMG,items:[
+    {id:'be1',name:'Água com Gás',desc:'',price:4.00,img:null},
+    {id:'be2',name:'Água sem Gás',desc:'',price:4.00,img:null},
+    {id:'be3',name:'Coca-Cola 2L',desc:'',price:15.00,img:null},
+    {id:'be4',name:'Coca-Cola 350ml',desc:'',price:7.00,img:null},
+    {id:'be5',name:'Coca-Cola Zero 2L',desc:'',price:15.00,img:null},
+    {id:'be6',name:'Coca-Cola Zero 600ml',desc:'',price:8.00,img:null},
+    {id:'be7',name:'Fanta Laranja 2L',desc:'',price:15.00,img:null},
+    {id:'be8',name:'Fanta Laranja 350ml (lata)',desc:'',price:6.00,img:null},
+    {id:'be9',name:'Fanta Laranja 600ml',desc:'',price:8.00,img:null},
+    {id:'be10',name:'Guaraná Antarctica 2L',desc:'',price:15.00,img:null},
+    {id:'be11',name:'Sprite 2L',desc:'',price:15.00,img:null},
+  ]},
+];
+
+// ── State ──────────────────────────────────────────────
+let currentView = 'categorias';
+let previousView = 'categorias';
+let cart = {}; // {itemId: {item, qty}}
+let loggedIn = false;
+let currentUser = null;
+
+// ── Category grid render ───────────────────────────────
+function renderCategories() {
+  const grid = document.getElementById('categoriesGrid');
+  grid.innerHTML = CATEGORIES.map(cat => `
+    <div class="category-card${cat.hasDesc?' has-desc':''}${cat.fullWidth?' full-width':''}" onclick="openCategory('${cat.id}')">
+      <div class="categorias-bg" style="background-image:url('${cat.bg}')"></div>
+      <div class="categorias-info"></div>
+      <div class="bg-shadow"></div>
+      <div class="category-content">
+        <h2 class="category-name">${cat.name}</h2>
+        ${cat.hasDesc?`<p class="category-desc">${cat.desc}</p>`:''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── View switching ─────────────────────────────────────
+function goToView(view) {
+  if(view === currentView) return;
+  previousView = currentView;
+
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.getElementById('main').scrollTop = 0;
+
+  const isSubView = (view==='detail');
+  document.getElementById('defaultHeader').classList.toggle('active', !isSubView);
+  document.getElementById('backHeader').classList.toggle('active', isSubView);
+
+  // bottom nav
+  document.querySelectorAll('.bottom-nav a').forEach(a=>{
+    const aView = a.dataset.view;
+    a.classList.toggle('active', aView===view || (view==='detail' && aView==='categorias'));
+  });
+
+  currentView = view;
+}
+
+// ── Category detail ────────────────────────────────────
+function openCategory(id) {
+  const cat = CATEGORIES.find(c=>c.id===id);
+  if(!cat) return;
+
+  document.getElementById('detailHeroBg').style.backgroundImage = `url('${cat.bg}')`;
+  document.getElementById('detailTitle').textContent = cat.name;
+  document.getElementById('backTitle').textContent = cat.name.length>20 ? cat.name.slice(0,18)+'…' : cat.name;
+
+  const list = document.getElementById('productList');
+  list.innerHTML = cat.items.map(item => `
+    <div class="product-item">
+      ${item.img ? `<img class="product-img" src="${item.img}" alt="${item.name}" loading="lazy" onerror="this.style.background='#e0e0e0'">` : `<div class="product-img"></div>`}
+      <div class="product-info">
+        <div class="product-title">${item.name}</div>
+        <div class="product-desc">${item.desc}</div>
+        <div class="product-price">R$ ${item.price.toFixed(2).replace('.',',')}</div>
+      </div>
+      <button class="add-btn" id="btn-${item.id}" onclick="addToCart('${cat.id}','${item.id}',event)" aria-label="Adicionar ao carrinho">
+        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      </button>
+    </div>
+  `).join('');
+
+  goToView('detail');
+}
+
+// ── Cart logic ─────────────────────────────────────────
+function addToCart(catId, itemId, event) {
+  const cat = CATEGORIES.find(c=>c.id===catId);
+  const item = cat && cat.items.find(i=>i.id===itemId);
+  if(!item) return;
+
+  if(cart[itemId]) {
+    cart[itemId].qty++;
+  } else {
+    cart[itemId] = {item, qty:1};
+  }
+
+  const btn = document.getElementById('btn-'+itemId);
+  if(btn){ btn.classList.add('added'); setTimeout(()=>btn.classList.remove('added'),300); }
+
+  updateCartUI();
+  showToast(`${item.name} adicionado!`);
+  event && event.stopPropagation();
+}
+
+function updateCartUI() {
+  const total = Object.values(cart).reduce((s,{item,qty})=>s+item.price*qty,0);
+  const count = Object.values(cart).reduce((s,{qty})=>s+qty,0);
+
+  // badge
+  const badge = document.getElementById('cartBadge');
+  badge.textContent = count;
+  badge.classList.toggle('show', count>0);
+
+  // cart view
+  const isEmpty = count===0;
+  document.getElementById('cartEmpty').style.display = isEmpty?'flex':'none';
+  document.getElementById('cartFull').style.display = isEmpty?'none':'block';
+  document.getElementById('cartTotal').textContent = 'R$ '+total.toFixed(2).replace('.',',');
+
+  const list = document.getElementById('cartItemsList');
+  list.innerHTML = Object.values(cart).map(({item,qty})=>`
+    <div class="cart-item">
+      ${item.img ? `<img class="cart-item-img" src="${item.img}" alt="${item.name}" onerror="this.style.background='#e0e0e0'">` : `<div class="cart-item-img"></div>`}
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">R$ ${(item.price*qty).toFixed(2).replace('.',',')} (${qty}x)</div>
+      </div>
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="changeQty('${item.id}',-1)">
+          <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg>
+        </button>
+        <span class="qty-num">${qty}</span>
+        <button class="qty-btn" onclick="changeQty('${item.id}',1)">
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function changeQty(itemId, delta) {
+  if(!cart[itemId]) return;
+  cart[itemId].qty += delta;
+  if(cart[itemId].qty<=0) delete cart[itemId];
+  updateCartUI();
+}
+
+function checkout() {
+  showToast('Pedido enviado! Em breve você será atendido.');
+  cart = {};
+  updateCartUI();
+  goToView('categorias');
+}
+
+// ── Account ────────────────────────────────────────────
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if(!email){ showToast('Informe seu e-mail'); return; }
+  loggedIn = true;
+  currentUser = {name: email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()), email};
+  document.getElementById('loggedName').textContent = currentUser.name;
+  document.getElementById('loggedEmail').textContent = currentUser.email;
+  document.getElementById('contaGuest').style.display = 'none';
+  document.getElementById('contaLogado').style.display = 'block';
+  showToast('Bem-vindo, '+currentUser.name+'!');
+}
+
+function doLogout() {
+  loggedIn = false; currentUser = null;
+  document.getElementById('contaGuest').style.display = 'block';
+  document.getElementById('contaLogado').style.display = 'none';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+}
+
+function showRegister() { showToast('Cadastro em breve!'); }
+
+// ── Info modal ─────────────────────────────────────────
+function openModal() {
+  document.getElementById('infoModal').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeModal() {
+  document.getElementById('infoModal').classList.remove('active');
+  document.body.style.overflow='';
+}
+
+// ── Toast ──────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ── Event listeners ────────────────────────────────────
+document.querySelectorAll('.bottom-nav a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const view = a.dataset.view;
+    if(view) goToView(view);
+  });
+});
+
+document.getElementById('backBtn').addEventListener('click',()=>{
+  goToView(previousView==='detail'?'categorias':previousView);
+});
+
+document.getElementById('infoLink').addEventListener('click',e=>{e.preventDefault();openModal();});
+document.getElementById('headerCartBtn').addEventListener('click',()=>goToView('carrinho'));
+document.getElementById('infoModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// ── Init ───────────────────────────────────────────────
+renderCategories();
+updateCartUI();
+</script>
+</body>
+</html>
