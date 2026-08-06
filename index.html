@@ -20,6 +20,8 @@ body{font-family:'Source Sans 3','Source Sans Pro',sans-serif;background:#e0e0e0
 .store-name{font-size:13.5px;font-weight:700;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .store-status-row{display:flex;align-items:center;gap:8px;margin-top:2px}
 .store-status{font-size:11.5px;font-weight:600;color:#ff4d4d;line-height:1}
+.store-status.open{color:#27ae60}
+.modal-status-badge.open{background:#f0fdf4;color:#16a34a;border-color:#bbf7d0}
 .store-info-link{font-size:11.5px;color:rgba(255,255,255,0.4);text-decoration:none;cursor:pointer;transition:color .2s}
 .store-info-link:hover{color:rgba(255,255,255,0.7)}
 .header-btn{background:none;border:none;cursor:pointer;color:#fff;padding:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;border-radius:50%;transition:background .15s}
@@ -183,7 +185,7 @@ main{flex:1;overflow-y:auto;padding-bottom:62px;-webkit-overflow-scrolling:touch
       <div class="store-info">
         <div class="store-name">Chapa Quente - Santiago</div>
         <div class="store-status-row">
-          <span class="store-status">Fechado</span>
+          <span class="store-status" id="storeStatus">Fechado</span>
           <a href="#" class="store-info-link" id="infoLink">+ Info.</a>
         </div>
       </div>
@@ -336,7 +338,7 @@ main{flex:1;overflow-y:auto;padding-bottom:62px;-webkit-overflow-scrolling:touch
         <img src="data:image/jpeg;base64,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" alt="Logo" class="modal-logo">
         <div>
           <div class="modal-title">Chapa Quente - Santiago</div>
-          <div><span class="modal-status-badge">Fechado agora</span></div>
+          <div><span class="modal-status-badge" id="modalStatus">Fechado agora</span></div>
         </div>
       </div>
       <div class="info-section">
@@ -531,8 +533,8 @@ const CATEGORIES = [
     {id:'mol1',name:'Maionese 100g',desc:'',price:2.00,img:MOLIMG},
   ]},
   {id:'bebidas',name:'BEBIDAS',fullWidth:true,hasDesc:false,bg:BIMG,items:[
-    {id:'be1',name:'Água com Gás',desc:'',price:4.00,img:null},
-    {id:'be2',name:'Água sem Gás',desc:'',price:4.00,img:null},
+    {id:'be1',name:'Água com Gás',desc:'',price:4.00,img:'./agua.avif'},
+    {id:'be2',name:'Água sem Gás',desc:'',price:4.00,img:'./agua.avif'},
     {id:'be3',name:'Coca-Cola 2L',desc:'',price:15.00,img:'./coca-cola-2l.jpg'},
     {id:'be4',name:'Coca-Cola 350ml',desc:'',price:7.00,img:'./coca-cola-350ml.jpg'},
     {id:'be5',name:'Coca-Cola Zero 2L',desc:'',price:15.00,img:'./coca-cola-zero-2l.jpg'},
@@ -681,10 +683,32 @@ function changeQty(itemId, delta) {
 }
 
 function checkout() {
-  showToast('Pedido enviado! Em breve você será atendido.');
+  const items = Object.values(cart);
+  if(!items.length) return;
+
+  const total = items.reduce((s,{item,qty})=>s+item.price*qty,0);
+  const lines = items.map(({item,qty})=>`• ${qty}x ${item.name} — R$ ${(item.price*qty).toFixed(2).replace('.',',')}`).join('\n');
+  const msg = `*Olá! Gostaria de fazer um pedido:*\n\n${lines}\n\n*Total: R$ ${total.toFixed(2).replace('.',',')}*`;
+
+  window.open('https://wa.me/5555999733321?text='+encodeURIComponent(msg), '_blank');
+
   cart = {};
   updateCartUI();
   goToView('categorias');
+}
+
+// ── Store status ───────────────────────────────────────
+function updateStoreStatus() {
+  // BRT = UTC-3
+  const now = new Date(new Date().toLocaleString('en-US', {timeZone:'America/Sao_Paulo'}));
+  const h = now.getHours(), m = now.getMinutes();
+  const mins = h * 60 + m;
+  const open = (mins >= 11*60 && mins < 14*60) || (mins >= 18*60 && mins < 23*60+30);
+
+  const el = document.getElementById('storeStatus');
+  const mel = document.getElementById('modalStatus');
+  if(el){ el.textContent = open ? 'Aberto' : 'Fechado'; el.classList.toggle('open', open); }
+  if(mel){ mel.textContent = open ? 'Aberto agora' : 'Fechado agora'; mel.classList.toggle('open', open); }
 }
 
 // ── Account ────────────────────────────────────────────
@@ -751,6 +775,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 // ── Init ───────────────────────────────────────────────
 renderCategories();
 updateCartUI();
+updateStoreStatus();
+setInterval(updateStoreStatus, 60000);
 </script>
 </body>
 </html>
