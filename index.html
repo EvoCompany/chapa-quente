@@ -205,6 +205,13 @@ main{flex:1;overflow-y:auto;padding-bottom:62px;-webkit-overflow-scrolling:touch
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 @supports (padding-bottom:env(safe-area-inset-bottom)){.bottom-nav{padding-bottom:env(safe-area-inset-bottom)}}
+/* Scrollbar: oculta em mobile, visível em desktop */
+main,.modal-sheet,.product-modal-inner{scrollbar-width:none;-ms-overflow-style:none}
+main::-webkit-scrollbar,.modal-sheet::-webkit-scrollbar,.product-modal-inner::-webkit-scrollbar{display:none}
+@media(hover:hover) and (pointer:fine){
+  main,.modal-sheet,.product-modal-inner{scrollbar-width:auto;-ms-overflow-style:auto}
+  main::-webkit-scrollbar,.modal-sheet::-webkit-scrollbar,.product-modal-inner::-webkit-scrollbar{display:block}
+}
 </style>
 </head>
 <body>
