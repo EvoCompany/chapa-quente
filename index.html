@@ -530,7 +530,7 @@ const CATEGORIES = [
     {id:'dog1',name:'Alpha Dog',desc:'Molho vermelho, Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Pimentão, Fritas, Salsicha, Maionese Caseira e catchup',price:21.00,img:DOGIMG},
     {id:'dog2',name:'Combo Econômico',desc:'Batata palha, Mostarda, Ervilha, Milho, Tomate, Salsicha, Queijo Parmesão, Maionese Caseira, Batata Frita, catchup e Meio pão de xis',price:15.00,img:'./combo-economico.jpg'},
   ]},
-  {id:'xis-prensado',name:'XIS PRENSADO',fullWidth:false,hasDesc:false,bg:XIMG,items:[
+  {id:'xis-prensado',name:'XIS PRENSADO',fullWidth:false,hasDesc:false,bg:XIMG,bgPos:'center 30%',items:[
     {id:'xp1',name:'Bacon',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Bacon e Alface',price:41.00,img:XIMG},
     {id:'xp2',name:'Calabresa',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Tomate, Queijo, Presunto, Ovo, Calabresa e Alface',price:31.00,img:XIMG},
     {id:'xp3',name:'Calabresa com Bacon',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Bacon, Calabresa, Maionese Caseira e catchup',price:34.00,img:XIMG},
@@ -576,7 +576,7 @@ const CATEGORIES = [
     {id:'xa19',name:'Strogonoff de Filé com Catupiry e Batata Palha',desc:'Batata palha, Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Catupiry, Maionese Temperada, Strogonoff de Filé e catchup',price:47.00,img:XAIMG},
     {id:'xa20',name:'Strogonoff de Frango',desc:'Molho branco, Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Frango',price:47.00,img:XAIMG},
   ]},
-  {id:'mini-xis',name:'MINI XIS',fullWidth:false,hasDesc:false,bg:XIMG,items:[
+  {id:'mini-xis',name:'MINI XIS',fullWidth:false,hasDesc:false,bg:XIMG,bgPos:'center 30%',items:[
     {id:'mx1',name:'Bacon',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Bacon',price:19.00,img:XIMG},
     {id:'mx2',name:'Calabresa',desc:'Ketchup, Mostarda, Maionese, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo e Calabresa',price:15.00,img:XIMG},
     {id:'mx3',name:'Calabresa com Bacon',desc:'Mostarda, Ervilha, Milho, Alface, Tomate, Queijo, Presunto, Ovo, Bacon, Calabresa, Maionese Temperada e catchup',price:19.00,img:XIMG},
@@ -612,10 +612,7 @@ const CATEGORIES = [
   {id:'porcoes',name:'PORÇÕES',fullWidth:false,hasDesc:false,bg:POIMG,items:[
     {id:'po1',name:'Fritas',desc:'a partir de',price:15.00,img:POIMG},
   ]},
-  {id:'molhos',name:'MOLHOS',fullWidth:false,hasDesc:false,bg:MOLIMG,items:[
-    {id:'mol1',name:'Maionese 100g',desc:'',price:2.00,img:MOLIMG},
-  ]},
-  {id:'bebidas',name:'BEBIDAS',fullWidth:true,hasDesc:false,bg:BIMG,items:[
+  {id:'bebidas',name:'BEBIDAS',fullWidth:false,hasDesc:false,bg:BIMG,items:[
     {id:'be1',name:'Água com Gás',desc:'',price:4.00,img:'./agua.avif'},
     {id:'be2',name:'Água sem Gás',desc:'',price:4.00,img:'./agua.avif'},
     {id:'be3',name:'Coca-Cola 2L',desc:'',price:15.00,img:'./coca-cola-2l.jpg'},
@@ -628,6 +625,9 @@ const CATEGORIES = [
     {id:'be10',name:'Guaraná Antarctica 2L',desc:'',price:15.00,img:'./guarana-antarctica.jpg'},
     {id:'be11',name:'Sprite 2L',desc:'',price:15.00,img:'./sprite.jpg'},
     {id:'be12',name:'Fanta Uva 600ml',desc:'',price:8.00,img:null},
+  ]},
+  {id:'molhos',name:'MOLHOS',fullWidth:false,hasDesc:false,bg:MOLIMG,items:[
+    {id:'mol1',name:'Maionese 100g',desc:'',price:2.00,img:MOLIMG},
   ]},
 ];
 
@@ -643,7 +643,7 @@ function renderCategories() {
   const grid = document.getElementById('categoriesGrid');
   grid.innerHTML = CATEGORIES.map(cat => `
     <div class="category-card${cat.hasDesc?' has-desc':''}${cat.fullWidth?' full-width':''}" onclick="openCategory('${cat.id}')">
-      <div class="categorias-bg" style="background-image:url('${cat.bg}')"></div>
+      <div class="categorias-bg" style="background-image:url('${cat.bg}')${cat.bgPos?';background-position:'+cat.bgPos:''}"></div>
       <div class="categorias-info"></div>
       <div class="bg-shadow"></div>
       <div class="category-content">
